@@ -8,7 +8,13 @@ const mcp = createDojoMcpHandler();
 
 function authorized(request: Request, key: string | undefined) {
   const value = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? request.headers.get("x-api-key");
-  return Boolean(key && value && value === key);
+  if (!key || !value) return false;
+  if (key.length !== value.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < key.length; i++) {
+    mismatch |= key.charCodeAt(i) ^ value.charCodeAt(i);
+  }
+  return mismatch === 0;
 }
 function allowedMcpHost(request: Request, rawHosts: string | undefined) {
   const hosts = (rawHosts ?? "").split(",").map(value => value.trim()).filter(Boolean);
