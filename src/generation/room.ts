@@ -43,6 +43,7 @@ function pickDoors(seed: string, width: number, height: number, count: number): 
   }
   return sides.slice(0, count).map((side, index) => {
     const candidates = sideCandidates(side, width, height);
+    if (candidates.length === 0) throw new Error(`No valid door positions available for ${side} side`);
     const position = candidates[Math.floor(rng() * candidates.length)];
     return { id: `door-${index + 1}`, ...position };
   });
