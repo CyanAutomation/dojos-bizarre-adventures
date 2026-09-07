@@ -161,3 +161,33 @@ GET /v1/rulesets/{rulesetVersion}
 
 Requesting an unknown or retired ruleset must return a clear error rather than
 quietly generating with a different version.
+
+## Initial implementation
+
+The first working increment implements deterministic, validated rectangular
+rooms. The pure TypeScript generator is used directly by both REST and MCP;
+the Cloudflare Worker only handles transport, CORS, and MCP authentication.
+
+```sh
+npm install
+npm test
+npm run typecheck
+npm run dev
+```
+
+The initial REST surface is:
+
+```txt
+GET  /healthz
+GET  /v1/capabilities
+GET  /v1/version
+GET  /v1/rulesets/dojo-rules-v1
+GET  /v1/rooms/generate?seed=round-42&width=11&height=11&doorCount=2
+POST /v1/rooms/generate
+POST /mcp                         (API key and hostname allowlist required)
+```
+
+`GET /v1/rooms/generate` is cacheable for five minutes and returns the
+normalised options, versions, numeric row-major tiles, door metadata,
+validation result, and stable content hash. The local API contract is in
+[`public/openapi/v1.yaml`](public/openapi/v1.yaml).

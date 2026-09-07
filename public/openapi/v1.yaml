@@ -1,0 +1,30 @@
+openapi: 3.1.0
+info:
+  title: Dojo's Bizarre Adventures API
+  version: 0.1.0
+  description: Deterministic procedural dojo-room generation. REST is public; MCP is API-key protected.
+paths:
+  /healthz:
+    get:
+      summary: Liveness check
+      responses: { '200': { description: Service is available } }
+  /v1/capabilities:
+    get:
+      summary: List supported generator and ruleset versions
+      responses: { '200': { description: Capabilities } }
+  /v1/rulesets/dojo-rules-v1:
+    get:
+      summary: Get the immutable v1 room ruleset
+      responses: { '200': { description: Ruleset } }
+  /v1/rooms/generate:
+    get:
+      summary: Generate a cacheable deterministic room
+      parameters:
+        - { name: seed, in: query, required: true, schema: { type: string, minLength: 1, maxLength: 128 } }
+        - { name: width, in: query, schema: { type: integer, minimum: 7, maximum: 21 } }
+        - { name: height, in: query, schema: { type: integer, minimum: 7, maximum: 21 } }
+        - { name: doorCount, in: query, schema: { type: integer, minimum: 1, maximum: 4 } }
+      responses: { '200': { description: Generated room }, '400': { description: Invalid input } }
+    post:
+      summary: Generate a room from a JSON request
+      responses: { '200': { description: Generated room }, '400': { description: Invalid input } }
