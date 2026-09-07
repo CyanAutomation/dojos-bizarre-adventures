@@ -9,7 +9,12 @@ const CACHE_CONTROL = "public, max-age=300, s-maxage=300, must-revalidate";
 async function requestBody(request: Request): Promise<Record<string, unknown>> {
   const text = await request.text();
   if (new TextEncoder().encode(text).byteLength > MAX_BODY_BYTES) throw new TypeError("request body is too large");
-  const body: unknown = JSON.parse(text);
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    throw new TypeError("request body must be valid JSON");
+  }
   if (!body || typeof body !== "object" || Array.isArray(body)) throw new TypeError("request body must be an object");
   return body as Record<string, unknown>;
 }
