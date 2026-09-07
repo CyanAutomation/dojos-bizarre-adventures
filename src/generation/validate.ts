@@ -1,7 +1,9 @@
 import { TILE, type Door, type Tile } from "../domain/types.js";
 
 function tileAt(tiles: readonly Tile[], width: number, x: number, y: number) {
-  return tiles[y * width + x];
+  const index = y * width + x;
+  if (index < 0 || index >= tiles.length) return undefined;
+  return tiles[index];
 }
 
 function inward(door: Door) {
