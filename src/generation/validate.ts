@@ -38,7 +38,12 @@ export function validateRoom(width: number, height: number, tiles: readonly Tile
         if (nextX >= 0 && nextX < width && nextY >= 0 && nextY < height) queue.push([nextX, nextY]);
       }
     }
-    for (const [x, y] of starts) if (!visited.has(`${x},${y}`)) diagnostics.push("required doors are not mutually reachable");
+    for (const [x, y] of starts) {
+      if (!visited.has(`${x},${y}`)) {
+        diagnostics.push("required doors are not mutually reachable");
+        break;
+      }
+    }
   }
   return diagnostics;
 }
