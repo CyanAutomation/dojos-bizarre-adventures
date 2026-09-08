@@ -18,3 +18,14 @@ test("bad API input has a stable 400 error response", async () => {
   assert.equal(response.status, 400);
   assert.deepEqual(await response.json(), { error: { code: "bad_request", message: "width and height must be odd" } });
 });
+
+test("malformed JSON has a stable 400 error response", async () => {
+  const response = await router(new Request("https://example.test/v1/rooms/generate", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: "{not-json",
+  }));
+
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { error: { code: "bad_request", message: "request body must be valid JSON" } });
+});

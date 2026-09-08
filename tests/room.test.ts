@@ -19,3 +19,13 @@ test("invalid generation options fail before a layout is made", () => {
   assert.throws(() => generateRoom({ seed: "x", width: 10 }), /odd/);
   assert.throws(() => generateRoom({ seed: "x", rulesetVersion: "future" }), /unknown rulesetVersion/);
 });
+
+test("validation reports malformed tile arrays and out-of-range doors without throwing", () => {
+  const diagnostics = validateRoom(7, 7, [TILE.WALL], [
+    { id: "outside", x: 99, y: 99, side: "north" },
+  ]);
+
+  assert.ok(diagnostics.includes("tile array does not match declared dimensions"));
+  assert.ok(diagnostics.includes("door outside is missing from tiles"));
+  assert.ok(diagnostics.includes("door outside does not lead to floor"));
+});
